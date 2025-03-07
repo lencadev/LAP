@@ -1,0 +1,36 @@
+<ion-app >
+  <ion-menu contentId="main-content" menuId="firts" type="overlay">
+    <ion-content>
+      <div class="d-flex justify-content-center">
+        <img width="150" src="assets/logo-large.png" alt="logo" />
+      </div>
+      <ion-list id="inbox-list">
+        <ion-item>
+          <ion-icon name="moon" slot="start"></ion-icon>
+          <ion-label class="text-center">Modo Oscuro</ion-label>
+          <ion-toggle slot="end" [ngModel]="darkMode" (ionChange)="cambioApariencia()"></ion-toggle>
+        </ion-item>
+        <ion-list-header>Gestión de Pagos</ion-list-header>
+        <ion-menu-toggle
+          auto-hide="false"
+          *ngFor="let p of appPages; let i = index">
+          <ion-item
+            routerDirection="root"
+            [routerLink]="[p.url]"
+            lines="none"
+            detail="false"
+            routerLinkActive="selected">
+            <ion-icon
+              slot="start"
+              [ios]="p.icon + '-outline'"
+              [md]="p.icon + '-sharp'"></ion-icon>
+            <ion-label>{{ p.title }}</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+
+  
+</ion-app>

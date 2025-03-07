@@ -1,0 +1,26 @@
+<ion-content [fullscreen]="false">
+  <app-wrapper> </app-wrapper>
+  <ion-grid>
+    <ion-row>
+      @for (folder of folders; track folder.name) { @if (!folder.rolesAuthorized
+      || (userLogged.rolid &&
+      folder.rolesAuthorized.includes(userLogged.rolid))) {
+      <ion-col size="6" size-md="2">
+        <ion-card [routerLink]="[folder.url]" class="folder-card">
+          <ion-card-header>
+            <div class="d-flex justify-content-between">
+              <ion-icon name="folder" size="large"></ion-icon>
+              <div>
+                <ion-badge color="primary">{{ folder.count }}</ion-badge>
+              </div>
+            </div>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-label>{{ folder.name }}</ion-label>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      } } @empty { No hay opciones... }
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,245 @@
+<ion-content [fullscreen]="true">
+  <app-wrapper></app-wrapper>
+  <ion-card
+    ><ion-card-header>
+      <ion-card-title>Cinta de Opciones</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="auto">
+            <ion-button color="primary" (click)="clearFilters()">
+              <ion-icon name="close-outline" slot="start"></ion-icon>
+              Limpiar Filtros
+            </ion-button>
+          </ion-col>
+
+          <ion-col size="auto">
+            <ion-button
+              color="danger"
+              (click)="printSection()"
+              [disabled]="!reporteSeleccionado">
+              <ion-icon name="print-outline" slot="start"></ion-icon>
+              Imprimir
+            </ion-button>
+          </ion-col>
+          <ion-col size="auto">
+            <ion-button color="success" routerLink="/layout/prestamos">
+              Ver Prestamos
+              <ion-icon slot="end" name="open-outline"></ion-icon>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+  <ion-grid>
+    <ion-row>
+      <ion-col size-xs="12" size-md="6" size-lg="6">
+        <ion-card style="min-height: 290px">
+          <ion-card-header>
+            @if(currentUser?.rolid!==3){
+            <ion-card-title>Panel Administrativo</ion-card-title>
+            }@else {
+            <ion-card-title>Panel Asesor</ion-card-title>
+            }
+          </ion-card-header>
+          <ion-card-content class="p-4">
+            @if(currentUser?.rolid!==3){
+            <ion-item class="ion-margin-top">
+              <ion-label>
+                <h2 class="ion-text-wrap">Asesor Seleccionado</h2>
+                <p *ngIf="selectedAsesor; else noAsesor">
+                  {{ selectedAsesor.nombre }} {{ selectedAsesor.apellido }}
+                </p>
+                <ng-template #noAsesor>
+                  <p>No se ha seleccionado un asesor</p>
+                </ng-template>
+              </ion-label>
+              <ion-button
+                slot="end"
+                color="primary"
+                (click)="showOpenModal(true, 'asesor')"
+                shape="round"
+                [disabled]="!enableFilterAsesor">
+                <ion-icon
+                  class="py-1"
+                  name="search-outline"
+                  slot="icon-only"></ion-icon>
+              </ion-button>
+            </ion-item>
+            }
+
+            <ion-item class="ion-margin-top">
+              <ion-label>
+                <h2 class="ion-text-wrap">Cliente Seleccionado</h2>
+                <p *ngIf="selectedCliente; else noCliente">
+                  {{ selectedCliente.nombres }} {{ selectedCliente.apellidos }}
+                </p>
+                <ng-template #noCliente>
+                  <p>No se ha seleccionado un cliente</p>
+                </ng-template>
+              </ion-label>
+              <ion-button
+                slot="end"
+                color="primary"
+                (click)="showOpenModal(true, 'cliente')"
+                shape="round"
+                [disabled]="!enableFilterCliente">
+                <ion-icon
+                  class="py-1"
+                  name="search-outline"
+                  slot="icon-only"></ion-icon>
+              </ion-button>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size-xs="12" size-md="6" size-lg="6">
+        <ion-card style="min-height: 290px">
+          <ion-card-header>
+            <ion-card-title>Reportes</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item button (click)="seleccionarReporte('clientes-mora')">
+                <ion-icon name="people-outline" slot="start"></ion-icon>
+                <ion-label>Clientes en Mora</ion-label>
+              </ion-item>
+              <ion-item button (click)="seleccionarReporte('estado-cuenta')">
+                <ion-icon name="document-text-outline" slot="start"></ion-icon>
+                <ion-label>Estado de Cuenta</ion-label>
+              </ion-item>
+              <ion-item
+                button
+                (click)="seleccionarReporte('record-crediticio')">
+                <ion-icon name="time-outline" slot="start"></ion-icon>
+                <ion-label>Record Crediticio</ion-label>
+              </ion-item>
+              <ion-item button (click)="seleccionarReporte('cartera-asesor')">
+                <ion-icon name="briefcase-outline" slot="start"></ion-icon>
+                <ion-label>Cartera Asesor</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+
+      <ion-col size-xs="12" size-md="12" size-lg="12" id="current-report">
+        <ion-card style="min-height: 100vh">
+          <ion-card-header>
+            <ion-card-title>Reporte Actual</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <br />
+            <section id="report-print">
+              @switch (reporteSeleccionado) { @case ('estado-cuenta') {
+              <app-report-estado-cuenta
+                [company]="company"
+                [selectedCliente]="selectedCliente"></app-report-estado-cuenta>
+              } @case ('clientes-mora') {
+              <app-report-clients-mora
+                [company]="company"
+                [currentUser]="currentUser"></app-report-clients-mora>
+              } @case ('record-crediticio') {
+              <app-report-record-crediticio
+                [company]="company"
+                [selectedCliente]="selectedCliente"></app-report-record-crediticio>
+              } @case ('cartera-asesor') {
+              <app-report-cartera-asesores
+                [company]="company"
+                [selectedAsesor]="selectedAsesor"></app-report-cartera-asesores>
+              } @default {
+              <report-loader [loading]="loading"></report-loader>
+              } }
+            </section>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <app-reusable-modal
+    [(isOpen)]="isModalOpen"
+    [content]="modalSelected"
+    (saveData)="handleSave($event)">
+  </app-reusable-modal>
+
+  <ng-template #modalAsesorSelector let-close="close" let-save="save">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Seleccionar Asesor</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="close()">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-searchbar
+        [placeholder]="'Buscar Asesor...'"
+        [(ngModel)]="searchAsesor"
+        (ionInput)="searchValueChanged($event, 'asesor')">
+      </ion-searchbar>
+
+      <!-- <ion-searchbar
+        (ionInput)="filterAsesores($event)"
+        placeholder="Buscar asesor"></ion-searchbar> -->
+      <ion-list>
+        <ion-item
+          class="user-select-none"
+          *ngFor="let asesor of filteredAsesores"
+          (click)="selectAsesor(asesor)">
+          <ion-label>
+            <h2>{{ asesor.nombre }} {{ asesor.apellido }}</h2>
+            <p>{{ asesor.correo }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-item class="user-select-none" (click)="selectAsesor(null)">
+          <ion-label>
+            <h2>Sin Selección</h2>
+            <p>N/D</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ng-template>
+  <ng-template #modalClienteSelector let-close="close" let-save="save">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Seleccionar Cliente</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="close()">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-searchbar
+        [placeholder]="'Buscar Cliente...'"
+        [(ngModel)]="searchClient"
+        (ionInput)="searchValueChanged($event, 'cliente')">
+      </ion-searchbar>
+      <!-- <ion-searchbar
+        (ionInput)="filterClientes($event)"
+        placeholder="Buscar cliente"></ion-searchbar> -->
+      <ion-list>
+        <ion-item
+          class="user-select-none"
+          *ngFor="let cliente of filteredClientes"
+          (click)="selectCliente(cliente)">
+          <ion-label>
+            <h2>{{ cliente.nombres }} {{ cliente.apellidos }}</h2>
+            <p>{{ cliente.email }}</p>
+          </ion-label>
+          <ion-badge slot="end">Asesor(COD:{{cliente.usuarioCliente?.usuarioId}})</ion-badge>
+        </ion-item>
+        <ion-item class="user-select-none" (click)="selectCliente(null)">
+          <ion-label>
+            <h2>Sin Selección</h2>
+            <p>N/D</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ng-template>
+</ion-content>

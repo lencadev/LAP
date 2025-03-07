@@ -1,0 +1,208 @@
+@media print {
+  /* General print styles */
+  body {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    /* line-height: 1.3; */
+    background: none;
+    color: #000;
+  }
+
+  /* Hide unnecessary elements for printing */
+  .no-print,
+  ion-button,
+  ion-searchbar,
+  ion-icon {
+    display: none !important;
+  }
+
+  /* Table styles */
+  .custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1cm;
+  }
+
+  .date-emision {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .custom-table th,
+  .custom-table td {
+    border: 1px solid #000;
+    padding: 0.2cm;
+  }
+
+  .custom-table th {
+    background-color: #f2f2f2 !important;
+    color: #000;
+    font-weight: bold;
+  }
+
+  /* Ensure backgrounds are printed */
+  .custom-table tr:nth-child(even) {
+    background-color: #f9f9f9 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Status cell styles */
+  .status-cell {
+    font-weight: bold;
+  }
+  .status-cell.pending {
+    color: #666 !important;
+  }
+  .status-cell.paid {
+    color: #000 !important;
+  }
+  .status-cell.overdue {
+    color: #333 !important;
+  }
+
+  /* Image adjustments */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+    float: right;
+    margin-left: 10px;
+  }
+
+  /* Prevent page breaks within elements */
+  tr,
+  td,
+  th,
+  p {
+    page-break-inside: avoid;
+    font-size: 12px !important;
+  }
+
+  /* Ensure table headers repeat on each page */
+  thead {
+    display: table-header-group;
+  }
+
+  h2 {
+    font-size: 14px !important;
+  }
+
+  /* Page layout adjustments */
+  @page {
+    margin: 2cm;
+    size: landscape;
+  }
+
+  p {
+    text-align: justify;
+  }
+
+  /* General table styles */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+
+  th,
+  td {
+    border: 1px solid #ddd;
+    padding: 4px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f2f2f2 !important;
+    text-align: center;
+  }
+
+  thead {
+    background-color: #f2f2f2 !important;
+  }
+
+  .especial-right {
+    text-align: right !important;
+  }
+
+  /* Header and section styles */
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .section {
+    margin-top: 15px;
+    font-weight: bold;
+  }
+
+  /* Client info styles */
+  .cliente-info {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .info-item {
+    margin-bottom: 10px;
+    padding-right: 10px;
+    border-right: 1px solid #ccc;
+  }
+  .info-label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+  }
+  .info-value {
+    display: block;
+  }
+  .info-item:last-child,
+  .info-item:nth-child(3n) {
+    border-right: none;
+  }
+}
+
+/* Payment view styles */
+.payment-details-header {
+  padding: 20px;
+  border-radius: 8px;
+}
+.header-title {
+  text-align: center;
+  margin: 0 0 20px 0;
+  font-size: 20px;
+  color: #333;
+}
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.client-info {
+  flex-grow: 1;
+}
+.client-info p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+.client-info strong {
+  color: #333;
+  margin-right: 5px;
+}
+.logo-container {
+  flex-shrink: 0;
+  margin-left: 20px;
+}
+.logo {
+  width: 100px;
+  height: auto;
+}

@@ -1,0 +1,349 @@
+<ion-content [fullscreen]="false">
+  <app-wrapper
+    [textLoader]="textLoader"
+    [toastMessage]="toastMessage"
+    [toastColor]="toastColor"
+    [isToastOpen]="isToastOpen"
+    (isToastOpenChange)="setOpenedToast($event)">
+  </app-wrapper>
+  <ion-grid>
+    <ion-row
+      class="d-flex justify-content-center"
+      *ngIf="currentUser?.rolid!==3">
+      <ion-col sizeSm="12" sizeMd="6">
+        <ion-segment value="all">
+          <ion-segment-button
+            color="primary"
+            (click)="goAction('Clientes')"
+            value="clients">
+            Clientes
+          </ion-segment-button>
+          <ion-segment-button
+            color="primary"
+            (click)="goAction('Todos')"
+            value="all">
+            Todos
+          </ion-segment-button>
+          <ion-segment-button
+            color="primary"
+            (click)="goAction('Avales')"
+            value="avals">
+            Avales
+          </ion-segment-button>
+        </ion-segment>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <section>
+    <app-view-data
+      [title]="title"
+      [context]="'cliente'"
+      [data]="elements"
+      [columnsData]="columnsData"
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      (addButtonClicked)="onAddButtonClicked()"
+      (editButtonClicked)="onEditButtonClicked($event)"
+      (deleteButtonClicked)="onDeleteButtonClicked($event)"
+      (infoButtonClicked)="onInfoButtonClicked($event)"
+      (currentPageOut)="onPageChange($event)"
+      (searchOut)="onSearchData($event)">
+    </app-view-data>
+
+    <app-reusable-modal
+      [(isOpen)]="isModalOpen"
+      [modalConfig]="modalConfig"
+      [content]="modalSelected"
+      [formSave]="formSelected"
+      (saveData)="handleSave($event)">
+    </app-reusable-modal>
+
+    <app-reusable-modal
+      [(isOpen)]="isModalOpenX"
+      [modalConfig]="modalConfigX"
+      [content]="modalSelectedX"
+      (saveData)="handleSaveX($event)">
+    </app-reusable-modal>
+
+    <ng-template #modalAdd let-close="close" let-save="save" let-form="form">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Formulario de Clientes/Avales</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="close()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="form" (ngSubmit)="save(form.value)">
+          <ion-grid>
+            <ion-row>
+              <ion-col size-xs="12" size-sm="6" size-md="6">
+                <ion-item lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >DNI:</ion-label
+                  >
+                  <ion-input
+                    [appInputMask]="'####-####-#####'"
+                    type="text"
+                    placeholder="0000-0000-00000"
+                    formControlName="dni"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size-xs="12" size-sm="6" size-md="6">
+                <ion-item lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >Nombres:</ion-label
+                  >
+                  <ion-input
+                    formControlName="nombres"
+                    placeholder="Ingrese nombres"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size-xs="12" size-sm="6" size-md="6">
+                <ion-item lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >Apellidos:</ion-label
+                  >
+                  <ion-input
+                    formControlName="apellidos"
+                    placeholder="Ingrese apellidos"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size-xs="12" size-sm="6" size-md="6">
+                <ion-item lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >Celular:</ion-label
+                  >
+                  <ion-input
+                    [appInputMask]="'####-####'"
+                    type="tel"
+                    formControlName="cel"
+                    placeholder="0000-0000"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size-xs="12" size-sm="6" size-md="6">
+                <ion-item lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >Dirección:</ion-label
+                  >
+                  <ion-textarea
+                    rows="3"
+                    formControlName="direccion"
+                    placeholder="Ingrese dirección"></ion-textarea>
+                </ion-item>
+              </ion-col>
+              <ion-col size-xs="12" size-sm="6" size-md="6">
+                <ion-item lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >Email:</ion-label
+                  >
+                  <ion-input
+                    type="email"
+                    formControlName="email"
+                    placeholder="user@gmail.com"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size-xs="12" size-sm="6" size-md="6">
+                <ion-item lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >Fecha de Ingreso:</ion-label
+                  >
+                  <ion-input
+                    type="date"
+                    formControlName="fechaIngreso"
+                    placeholder="YYYY-MM-DD"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size-xs="12" size-sm="6" size-md="6">
+                <ion-item lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >Fecha de Baja:</ion-label
+                  >
+                  <ion-input
+                    type="date"
+                    formControlName="fechaBaja"
+                    placeholder="YYYY-MM-DD"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size-xs="12" size-md="6">
+                <ion-item lines="none" lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >Estado</ion-label
+                  >
+                  <ion-toggle
+                    formControlName="estado"
+                    class="my-2"></ion-toggle>
+                </ion-item>
+              </ion-col>
+              <ion-col size-xs="12" size-sm="6" size-md="6">
+                <ion-item lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >Nacionalidad:</ion-label
+                  >
+
+                  <ion-input
+                    (click)="openSelector('nacionalidad')"
+                    readonly
+                    [value]="selectedNacionalidad ? selectedNacionalidad.descripcion : ''"
+                    placeholder="Seleccione nacionalidad">
+                    @if(selectedNacionalidad){
+                    <ion-avatar slot="start">
+                      <img
+                        [height]="5"
+                        [width]="5"
+                        [src]="selectedNacionalidad.urlBandera"
+                        [alt]="'Bandera de ' + selectedNacionalidad.descripcion" />
+                    </ion-avatar>
+                    }
+                  </ion-input>
+                </ion-item>
+              </ion-col>
+
+              <ion-col size-xs="12" size-sm="6" size-md="6">
+                <ion-item lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >Estado Civil:</ion-label
+                  >
+                  <ion-select
+                    formControlName="idEstadoCivil"
+                    placeholder="Seleccione estado civil">
+                    <ion-select-option
+                      *ngFor="let estado of estadosCiviles"
+                      [value]="estado.id">
+                      {{ estado.descripcion }}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size-xs="12" size-sm="6" size-md="6">
+                <ion-item lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >Tipo de Persona:</ion-label
+                  >
+                  <ion-select
+                    formControlName="idTipoPersona"
+                    placeholder="Seleccione tipo de persona">
+                    <ion-select-option
+                      *ngFor="let tipo of tiposPersona"
+                      [value]="tipo.id">
+                      {{ tipo.descripcion }}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size-xs="12" size-sm="12" size-md="12">
+                <ion-item
+                  lines="none"
+                  [disabled]="this.formAdd.get('idTipoPersona')?.value ===2">
+                  <ion-label position="stacked" class="bold-label"
+                    >Asesor:</ion-label
+                  >
+                  <ion-input
+                    (click)="openSelector('asesor')"
+                    readonly
+                    [value]="selectedAsesor ? selectedAsesor.nombre + ' '+selectedAsesor.apellido  : ''"
+                    placeholder="Seleccione asesor">
+                  </ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+          <ion-grid>
+            <ion-row class="ion-justify-content-center">
+              <ion-col size-xs="12" size-sm="8" size-md="6" size-lg="4">
+                <ion-button expand="block" type="submit" class="ion-margin-top">
+                  Guardar
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </form>
+      </ion-content>
+    </ng-template>
+
+    <ng-template #modalNacionalidadSelector let-close="close" let-save="save">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Seleccionar Nacionalidad</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="close()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <ion-searchbar
+          (ionInput)="filterNacionalidades($event)"
+          placeholder="Buscar nacionalidad"></ion-searchbar>
+        <ion-list>
+          <ion-item
+            class="user-select-none"
+            *ngFor="let nacionalidad of filteredNacionalidades"
+            (click)="selectNacionalidad(nacionalidad)">
+            <ion-avatar slot="start">
+              <img
+                [src]="nacionalidad.urlBandera"
+                [alt]="'Bandera de ' + nacionalidad.descripcion" />
+            </ion-avatar>
+            <ion-label>
+              <h2>{{ nacionalidad.abreviatura }}</h2>
+              <p>{{ nacionalidad.descripcion }}</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+
+    <ng-template #modalAsesorSelector let-close="close" let-save="save">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Seleccionar Asesor</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="close()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <ion-searchbar
+          (ionInput)="filterAsesores($event)"
+          placeholder="Buscar asesor"></ion-searchbar>
+        <ion-list>
+          <ion-item
+            class="user-select-none"
+            *ngFor="let asesor of filteredAsesores"
+            (click)="selectAsesor(asesor)">
+            <ion-label>
+              <h2>{{ asesor.nombre }} {{asesor.apellido}}</h2>
+              <p>{{ asesor.correo }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item
+            lines="none"
+            class="user-select-none"
+            (click)="selectAsesor(null)">
+            <ion-label>
+              <h2>Sin Selección</h2>
+              <p>N/D</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+
+    <ng-template #modalViewInfo let-close="close" let-save="save">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Vista de Cliente</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="close()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <card-view-info
+          [element]="element"
+          [columnsData]="columnsData"></card-view-info>
+      </ion-content>
+    </ng-template>
+  </section>
+</ion-content>

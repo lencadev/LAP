@@ -1,0 +1,339 @@
+<ion-content [fullscreen]="true">
+  <app-wrapper
+    [showBreadcrumb]="false"
+    [textLoader]="textLoader"
+    [toastMessage]="toastMessage"
+    [toastColor]="toastColor"
+    [isToastOpen]="isToastOpen"
+    (isToastOpenChange)="setOpenedToast($event)">
+  </app-wrapper>
+
+  <br />
+  <ion-card class="mt-5">
+    <ion-card-header>
+      <ion-card-title>Datos Empresa/Bancarios</ion-card-title>
+      <div class="d-flex justify-content-end">
+        <ion-button color="danger" (click)="generateContract()" [disabled]="!isAprobado">
+          Generar Contrato
+          <ion-icon slot="end" name="document-text-outline"></ion-icon>
+        </ion-button>
+        <ion-button color="success" routerLink="/layout/prestamos">
+          Ver Prestamos
+          <ion-icon slot="end" name="open-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-sm="6" size-md="4">
+            <ion-item lines="none">
+              <ion-label position="stacked" class="bold-label"
+                >Banco a Depositar</ion-label
+              >
+              <div style="display: flex; align-items: center; width: 100%">
+                <ion-input
+                  [(ngModel)]="bancoDepositar"
+                  [disabled]="!editarBancoDepositar"
+                  placeholder="Ej: Banco Nacional"
+                  style="flex: 1">
+                </ion-input>
+                <ion-button
+                  [disabled]="existContrato || !isAprobado"
+                  shape="round"
+                  (click)="editarBancoDepositar = !editarBancoDepositar"
+                  style="margin-left: 8px">
+                  <ion-icon
+                    [name]="editarBancoDepositar ? 'checkmark-circle' : 'create'"
+                    slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+            </ion-item>
+          </ion-col>
+
+          <ion-col size="12" size-sm="6" size-md="4">
+            <ion-item lines="none">
+              <ion-label position="stacked" class="bold-label"
+                >Cuenta Bancaria a Depositar</ion-label
+              >
+              <div style="display: flex; align-items: center; width: 100%">
+                <ion-input
+                  [(ngModel)]="cuentaBancaria"
+                  [disabled]="!editarCuentaBancaria"
+                  placeholder="Ej: 1234-5678-9012-3456"
+                  style="flex: 1">
+                </ion-input>
+                <ion-button
+                  [disabled]="existContrato || !isAprobado"
+                  shape="round"
+                  (click)="editarCuentaBancaria = !editarCuentaBancaria"
+                  style="margin-left: 8px">
+                  <ion-icon
+                    [name]="editarCuentaBancaria ? 'checkmark-circle' : 'create'"
+                    slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+            </ion-item>
+          </ion-col>
+
+          <ion-col size="12" size-sm="6" size-md="4">
+            <ion-item lines="none">
+              <ion-label position="stacked" class="bold-label"
+                >Dirección Empresa</ion-label
+              >
+              <div style="display: flex; align-items: center; width: 100%">
+                <ion-input
+                  [(ngModel)]="direccionEmpresa"
+                  [disabled]="!editarDireccionEmpresa"
+                  placeholder="Ej: Col. Algun lugar..."
+                  style="flex: 1">
+                </ion-input>
+                <ion-button
+                  [disabled]="existContrato || !isAprobado"
+                  shape="round"
+                  (click)="editarDireccionEmpresa = !editarDireccionEmpresa"
+                  style="margin-left: 8px">
+                  <ion-icon
+                    [name]="editarDireccionEmpresa ? 'checkmark-circle' : 'create'"
+                    slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+            </ion-item>
+          </ion-col>
+
+          <ion-col size="12" size-sm="6" size-md="4">
+            <ion-item lines="none">
+              <ion-label position="stacked" class="bold-label"
+                >Ciudad</ion-label
+              >
+              <div style="display: flex; align-items: center; width: 100%">
+                <ion-input
+                  [(ngModel)]="ciudadBanco"
+                  [disabled]="!editarCiudadBanco"
+                  placeholder="Ej: Gracias Lempira..."
+                  style="flex: 1">
+                </ion-input>
+                <ion-button
+                  [disabled]="existContrato || !isAprobado"
+                  shape="round"
+                  (click)="editarCiudadBanco = !editarCiudadBanco"
+                  style="margin-left: 8px">
+                  <ion-icon
+                    [name]="editarCiudadBanco ? 'checkmark-circle' : 'create'"
+                    slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+            </ion-item>
+          </ion-col>
+
+          <ion-col size="12" size-sm="6" size-md="4">
+            <ion-item lines="none">
+              <ion-label position="stacked" class="bold-label"
+                >Fecha de Acuerdo</ion-label
+              >
+              <div style="display: flex; align-items: center; width: 100%">
+                <ion-input
+                  type="date"
+                  placeholder="YYYY-MM-DD"
+                  [(ngModel)]="fechaAcuerdo"
+                  [disabled]="!editarFechaAcuerdo"
+                  style="flex: 1">
+                </ion-input>
+                <ion-button
+                  [disabled]="existContrato || !isAprobado"
+                  shape="round"
+                  (click)="editarFechaAcuerdo = !editarFechaAcuerdo"
+                  style="margin-left: 8px">
+                  <ion-icon
+                    [name]="editarFechaAcuerdo ? 'checkmark-circle' : 'create'"
+                    slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+            </ion-item>
+          </ion-col>
+
+          <ion-col size="12" size-sm="6" size-md="4">
+            <ion-item lines="none">
+              <ion-label position="stacked" class="bold-label"
+                >Lugar de Acuerdo</ion-label
+              >
+              <div style="display: flex; align-items: center; width: 100%">
+                <ion-input
+                  placeholder="Ej. Lugar de Acuerdo"
+                  [(ngModel)]="lugarAcuerdo"
+                  [disabled]="!editarLugarAcuerdo"
+                  style="flex: 1">
+                </ion-input>
+                <ion-button
+                  [disabled]="existContrato || !isAprobado"
+                  shape="round"
+                  (click)="editarLugarAcuerdo = !editarLugarAcuerdo"
+                  style="margin-left: 8px">
+                  <ion-icon
+                    [name]="editarLugarAcuerdo ? 'checkmark-circle' : 'create'"
+                    slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <div class="alert alert-danger" role="alert" *ngIf="existContrato">
+        Ya existe un contrato generado para este préstamo, por políticas de
+        seguridad no se puede modificar el contenido de este documento.
+      </div>
+
+      <div class="alert alert-warning" role="alert" *ngIf="!isAprobado">
+        El prestamo no esta aprobado, no se podrá generar el contrato.
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <div>
+    <!-- <ion-card-content id="print-element" > -->
+    <div id="print-contract" class="d-flex justify-content-center mt-5">
+      <div [ngClass]="{'container': !isPrint, 'm-2':isPrint}">
+        <div class="pagare-header">
+          <div class="pagare-header__left">
+            <ion-badge class="pagare-header__badge" slot="end" color="primary">
+              Contrato #: {{correlativo}}
+            </ion-badge>
+            <p class="pagare-header__title">
+              PAGARÉ POR {{prestamoSeleccionado?.totalMonto | currency : "L" :
+              "symbol"}}
+            </p>
+          </div>
+          <div class="pagare-header__right">
+            <img
+              class="pagare-header__logo"
+              src="assets/logo.png"
+              alt="FICRE logo" />
+          </div>
+        </div>
+        <hr />
+        <div class="row">
+          <div class="col-12">
+            @if(hasAval){
+            <!-- Párrafo con aval -->
+            <p>
+              Nosotros,
+              <strong>
+                {{clienteSeleccionado?.nombres}}
+                {{clienteSeleccionado?.apellidos}} </strong
+              >, mayor de edad,
+              {{toLowerCase(clienteSeleccionado?.estadoCivil?.descripcion)}},
+              {{toLowerCase(clienteSeleccionado?.nacionalidad?.gentilicio)}},
+              con documento nacional de identificación
+              {{clienteSeleccionado?.dni}}, con domicilio en
+              {{clienteSeleccionado?.direccion}} y Yo
+              <strong
+                >{{avalSeleccionado?.nombres}} {{avalSeleccionado?.apellidos}} </strong
+              >, con documento nacional de identificación
+              {{avalSeleccionado?.dni|formatDni}}, en condición de aval
+              solidario, mayor de edad,
+              {{toLowerCase(avalSeleccionado?.estadoCivil?.descripcion)}},
+              {{toLowerCase(avalSeleccionado?.nacionalidad?.gentilicio)}}, con
+              domicilio en {{avalSeleccionado?.direccion}}; por medio del
+              presente documento:
+            </p>
+            }@else {
+            <!-- Párrafo sin aval -->
+            <p>
+              Yo,
+              <strong
+                >{{clienteSeleccionado?.nombres}}
+                {{clienteSeleccionado?.apellidos}}</strong
+              >, mayor de edad,
+              {{toLowerCase(clienteSeleccionado?.estadoCivil?.descripcion)}},
+              {{toLowerCase(clienteSeleccionado?.nacionalidad?.gentilicio)}},
+              con documento nacional de identificación
+              {{clienteSeleccionado?.dni |formatDni}}, con domicilio en
+              {{clienteSeleccionado?.direccion}}; por medio del presente
+              documento:
+            </p>
+            }
+            <p><strong>DECLARO Y HAGO CONSTAR:</strong></p>
+            <p>
+              <strong>PRIMERO:</strong> Que adeudo a @if(nombreEmpresa===''){
+              <strong style="color: red">Pendiente Empresa</strong>
+              }@else { {{nombreEmpresa}}} quien es representada legalmente por
+              ____________________________________ con documento nacional
+              ________________________________ y con domicilio en
+              @if(direccionEmpresa===''){
+              <strong style="color: red">Pendiente Dirección</strong>
+              }@else { {{direccionEmpresa}}}, la cantidad de
+              {{this.prestamoSeleccionado?.totalMonto |
+              numberToWords:'lempiras'}}
+              ({{this.prestamoSeleccionado?.totalMonto| currency : "L" :
+              "symbol"}}).
+            </p>
+            <p>
+              <strong>SEGUNDO:</strong> Los cuales me comprometo a pagarlos, sin
+              retraso alguno, en un lapso de tiempo de
+              {{convertirNumero(prestamoSeleccionado?.planPago?.cuotasPagar)}}
+              @switch (prestamoSeleccionado.idPeriodoCobro) { @case (1) {
+              semanas} @case (2) { quincenas}@case (3) { meses} @default {
+              Ninguno.} }, que serán pagaderos en fecha
+              @if(this.prestamoSeleccionado?.planPago?.fechaFin){
+              {{formatDate(this.prestamoSeleccionado?.planPago?.fechaFin)}}
+              }@else {
+              <strong style="color: red">No Aún</strong>
+              } el cual se hará mediante depósito a cuenta número
+              @if(cuentaBancaria===''){
+              <strong style="color: red">Pendiente Cuenta Bancaria</strong>
+              }@else { {{cuentaBancaria}}}, de @if(bancoDepositar===''){
+              <strong style="color: red">Pendiente Banco</strong>
+              }@else { {{bancoDepositar}}}, en la Ciudad de
+              @if(ciudadBanco===''){
+              <strong style="color: red">Pendiente Ciudad</strong>
+              }@else { {{ciudadBanco}}}, la totalidad de
+              {{this.prestamoSeleccionado?.totalMonto |
+              numberToWords:'lempiras'}}
+              ({{this.prestamoSeleccionado?.totalMonto| currency : "L" :
+              "symbol"}}), por concepto de préstamo. En caso de incurrir en mora
+              por incumplimiento de las obligaciones de pago pactadas, se
+              aplicará un recargo de intereses moratorios del {{percentage}}%
+              mensual.
+            </p>
+            <p>
+              <strong>TERCERO:</strong> En caso de incumplimiento en el pago de
+              la obligación pactada, el Acreedor tendrá derecho a proceder por
+              vía judicial, <strong>SIN PROTESTO</strong>, ante el Juzgado o
+              Tribunal que la empresa prestataria designe. El Acreedor podrá
+              reclamar el total de la obligación adeudada, así como todos los
+              gastos incurridos en el proceso y los honorarios de los
+              profesionales del Derecho involucrados en la ejecución judicial.
+              Todos estos costos serán responsabilidad del Deudor. Este
+              documento tendrá carácter de <strong>TÍTULO EJECUTIVO</strong>,
+              con fuerza ejecutiva inmediata.
+            </p>
+
+            <p class="mt-4">
+              En fe de lo cual y para los fines legales correspondientes, firmo
+              el presente PAGARE en @if(this.lugarAcuerdo){
+              {{this.lugarAcuerdo}}}@else {
+              <strong style="color: red">Pendiente lugar acuerdo</strong>}, a
+              los días, @if(this.fechaAcuerdo){
+              {{formatDate(this.fechaAcuerdo)}} }@else {
+              <strong style="color: red">Pendiente fecha acuerdo</strong>}.
+            </p>
+            <div class="signature-container">
+              <div class="signature-box">
+                <div class="signature-line">
+                  <p>Firma</p>
+                </div>
+              </div>
+              @if(hasAval){
+              <div class="signature-box">
+                <div class="signature-line text-center">
+                  <p>Firma (Aval)</p>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,190 @@
+<div class="header">
+  <h2>{{ company }}</h2>
+  <h3>Record Crediticio</h3>
+</div>
+<div class="cliente-info">
+  <div class="info-grid">
+    <div class="info-item">
+      <span class="info-label">CLIENTE:</span>
+      <span class="info-value"
+        >{{ selectedCliente?.nombres || "N/A" }}
+        {{ selectedCliente?.apellidos }}</span
+      >
+    </div>
+    <div class="info-item">
+      <span class="info-label">NRO. CLIENTE:</span>
+      <span class="info-value">{{ selectedCliente?.id || "N/A" }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">DIRECCION:</span>
+      <span class="info-value">{{ selectedCliente?.direccion || "N/A" }}</span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">TELEFONO:</span>
+      <span class="info-value">{{ selectedCliente?.cel || "N/A" }}</span>
+    </div>
+  </div>
+</div>
+<table>
+  <tr>
+    <th class="especial-right">Fecha Impresion:</th>
+    <td>{{ subtractHours(dateNow, 6) | customDate : 6 : "dd/MM/yyyy" }}</td>
+    <th class="especial-right">Asesor:</th>
+    <td>
+      {{ encabezado.asesor || "N/A" }}
+    </td>
+  </tr>
+  <tr>
+    <th class="especial-right">Producto:</th>
+    <td>
+      {{ encabezado.producto }}
+    </td>
+
+    <th class="especial-right">Fecha Proceso:</th>
+    <td>{{ encabezado.fechaProceso | customDate : 6 : "dd/MM/yyyy" }}</td>
+  </tr>
+  <tr>
+    <th class="especial-right">Etapa:</th>
+    <td>{{ encabezado.etapa }}</td>
+    <th class="especial-right">Record Crediticio:</th>
+    <td>{{ encabezado.recordCrediticio }}</td>
+  </tr>
+  <tr>
+    <th class="especial-right">Nro.Total Ptmos:</th>
+    <td>{{ encabezado.numeroTotalPtmos }}</td>
+    <th class="especial-right">Cantidad Desembolso:</th>
+    <td>{{ encabezado.cantidadDesembolso | currency : "L" : "symbol" }}</td>
+  </tr>
+</table>
+
+<p><strong>Detalle de Pagos:</strong></p>
+<table>
+  <tr>
+    <th>Nro. Cuota</th>
+    <th>Fecha Vencimiento</th>
+    <th>Fecha Cancelación</th>
+    <th>Días de Atraso</th>
+    <th>Capital Cuota</th>
+    <th>Intereses Cuota</th>
+    <th>Mora</th>
+    <th>Total Cuota</th>
+    <th>Saldo Actual</th>
+  </tr>
+  @for (item of cuerpo; track $index) {
+  <tr>
+    <td class="text-center">{{ item.nCuota }}</td>
+    <td class="text-center">
+      {{ item.fechaVencimiento | customDate : 6 : "dd/MM/yyyy" }}
+    </td>
+    <td class="text-center">
+      {{ item.fechaCancelacion | customDate : 6 : "dd/MM/yyyy" }}
+    </td>
+    <td class="text-center">{{ item.dias }}</td>
+    <td>{{ item.capital | currency : "L" : "symbol" }}</td>
+    <td>{{ item.intereses | currency : "L" : "symbol" }}</td>
+    <td>{{ item.mora | currency : "L" : "symbol" }}</td>
+    <td>{{ item.cuota | currency : "L" : "symbol" }}</td>
+    <td>{{ item.saldoCapital | currency : "L" : "symbol" }}</td>
+  </tr>
+
+  }
+  <tr>
+    <td colspan="3" class="especial-right"><strong>Totales Pagos:</strong></td>
+    <td class="text-center"> {{calculateTotalDetallesPagos("dias")}} </td>
+    <td>
+      <strong>{{ calculateTotalDetallesPagos("capital") | currency : "L" : "symbol" }}</strong>
+    </td>
+    <td>
+      <strong>{{ calculateTotalDetallesPagos("intereses") | currency : "L" : "symbol" }}</strong>
+    </td>
+    <td>
+      <strong>{{ calculateTotalDetallesPagos("mora") | currency : "L" : "symbol" }}</strong>
+    </td>
+    <td>
+      <strong>{{ calculateTotalDetallesPagos("cuota") | currency : "L" : "symbol" }}</strong>
+    </td>
+    <td>
+      <strong *ngIf="cuerpo.length > 0">{{
+        cuerpo[cuerpo.length - 1].saldoCapital || 0
+          | currency : "L" : "symbol"
+      }}</strong>
+
+      <strong *ngIf="cuerpo.length == 0">{{
+        0 | currency : "L" : "symbol"
+      }}</strong>
+    </td>
+
+  </tr>
+</table>
+
+<hr />
+<p><strong>Detalle de Prestamos Activos:</strong></p>
+<table>
+  <tr>
+    <th>Cód. Prestamo</th>
+    <th>Fecha</th>
+    <th>Plazo</th>
+    <th>Monto</th>
+    <th>Asesor</th>
+    <th>Tasa</th>
+    <th>Tipo</th>
+  </tr>
+  @for (item of pie.activos; track $index) {
+  <tr>
+    <td class="text-center">{{ item.idPrestamo }}</td>
+    <td class="text-center">
+      {{ item.fecha | customDate : 6 : "dd/MM/yyyy" }}
+    </td>
+    <td class="text-center">{{ item.plazo }}</td>
+    <td>{{ item.monto | currency : "L" : "symbol" }}</td>
+    <td>{{ item.asesor }}</td>
+    <td class="text-center">{{ item.tasa | number : "1.2-2" }}%</td>
+    <td class="text-center">{{ item.tipo }}</td>
+  </tr>
+  }
+  <tr>
+    <td colspan="2" class="especial-right"><strong>Totales Activos:</strong></td>
+    <td></td>
+    <td>
+      <strong>{{
+        calculateTotalPrestamosActivos("monto") | currency : "L" : "symbol"
+      }}</strong>
+    </td>
+  </tr>
+</table>
+
+<hr />
+<p><strong>Detalle de Prestamos Completados:</strong></p>
+<table>
+  <tr>
+    <th>Cód. Prestamo</th>
+    <th>Fecha</th>
+    <th>Plazo</th>
+    <th>Monto</th>
+    <th>Asesor</th>
+    <th>Tasa</th>
+    <th>Tipo</th>
+  </tr>
+  @for (item of pie.completados; track $index) {
+  <tr>
+    <td class="text-center">{{ item.idPrestamo }}</td>
+    <td class="text-center">
+      {{ item.fecha | customDate : 6 : "dd/MM/yyyy" }}
+    </td>
+    <td class="text-center">{{ item.plazo }}</td>
+    <td>{{ item.monto | currency : "L" : "symbol" }}</td>
+    <td>{{ item.asesor }}</td>
+    <td class="text-center">{{ item.tasa | number : "1.2-2" }}%</td>
+    <td class="text-center">{{ item.tipo }}</td>
+  </tr>
+  }
+  <tr>
+    <td colspan="2" class="especial-right"><strong>Totales Completados:</strong></td>
+    <td></td>
+    <td>
+      <strong>{{
+        calculateTotalPrestamosCompletados("monto") | currency : "L" : "symbol"
+      }}</strong>
+    </td>
+  </tr>
+</table>

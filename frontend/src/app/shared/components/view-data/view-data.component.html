@@ -1,0 +1,257 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-title class="d-none d-md-block" *ngIf="showTitle">{{
+      title
+    }}</ion-card-title>
+    <div class="d-flex justify-content-end">
+      <div>
+        <ion-button
+          *ngIf="showFilter"
+          color="warning"
+          (click)="onFilterClick()">
+          Mostrar {{ state ? "Inactivos" : "Activos" }}
+          <ion-icon class="ms-2" name="filter-outline"></ion-icon>
+        </ion-button>
+        <ion-button
+          *ngIf="showAdd && userLogged.rolid !== 3"
+          color="primary"
+          (click)="onAddButtonClick()">
+          Agregar <ion-icon name="add-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="showSearch">
+      <ion-searchbar
+        [placeholder]="searchPlaceHolder"
+        [(ngModel)]="search"
+        (ngModelChange)="searchValueChanged($event)"></ion-searchbar>
+    </div>
+    <ng-content select="[headerContent]"></ng-content>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ng-container>
+      <div class="table-responsive d-none d-md-block mt-3">
+        <table class="custom-table table-sticky">
+          <thead class="thead-sticky">
+            <tr>
+              <th *ngFor="let column of columnsData" class="text-center">
+                {{ column.alias }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of data">
+              <td *ngFor="let column of columnsData" class="text-center">
+                <ng-container
+                  *ngIf="column.key !== 'actions'; else actionsTemplate">
+                  <ng-container [ngSwitch]="column.type">
+                    <ng-container *ngSwitchCase="'boolean'">
+                      <span
+                        class="badge"
+                        [ngClass]="{
+                          'text-bg-success':
+                            getCellValue(row, column) === 'true',
+                          'text-bg-secondary':
+                            getCellValue(row, column) === 'false'
+                        }">
+                        {{
+                          getCellValue(row, column) === "true"
+                            ? getCellOptions(column)[0]
+                            : getCellOptions(column)[1]
+                        }}
+                        <!-- {{ getCellValue(row, column) }} -->
+                      </span>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'options'">
+                      <span
+                        class="badge"
+                        [ngClass]="getClassForOption(column, row)">
+                        {{ getCellOptionValue(row, column) }}
+                      </span>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'array'">
+                      <ng-container
+                        *ngFor="
+                          let item of getValuesArray(row, column);
+                          index as i
+                        ">
+                        @if(isPrint){
+                        <p>
+                          {{
+                            item[getCellPropsVisibles(column)[0]]
+                              | customDate : 6 : "dd/MM/yyyy"
+                          }}
+                          <br />
+                          <strong>{{
+                            item[getCellPropsVisibles(column)[1]]
+                              | currency : "L" : "symbol"
+                          }}</strong>
+                        </p>
+                        <hr *ngIf="i === 0" />
+                        }@else{
+                        <ion-chip>
+                          <ion-label>
+                            <span>
+                              {{
+                                item[getCellPropsVisibles(column)[0]]
+                                  | customDate : 6 : "dd/MM/yyyy"
+                              }}
+                            </span>
+                            <br />
+                            <strong>{{
+                              item[getCellPropsVisibles(column)[1]]
+                                | currency : "L" : "symbol"
+                            }}</strong></ion-label
+                          >
+                          <ion-icon
+                            (click)="onDeleteButtonClick(item)"
+                            name="close-circle"></ion-icon>
+                        </ion-chip>
+                        }
+                      </ng-container>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'code'">
+                      <span class="badge badge-pill badge-primary"
+                        >COD: {{ getCellValue(row, column) }}</span
+                      >
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'date'">
+                      @if(getCellValue(row, column)!=='N/A'){
+                      {{
+                        getCellValue(row, column)
+                          | customDate : 6 : "dd/MM/yyyy"
+                      }}
+                      }@else { N/A }
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'percentage'">
+                      {{ getCellValue(row, column) | number : "1.2-2" }}%
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'currency'">
+                      {{
+                        getCellValue(row, column) | currency : "L" : "symbol"
+                      }}
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'dni'">
+                      {{ getCellValue(row, column) | formatDni }}
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'xml'">
+                      @for (item of getCellValue(row, column) | xmlToList; track
+                      item) {
+                      <p>{{ item }}</p>
+                      } @empty {
+                      <p>No existen Elementos para mostrar.</p>
+                      }
+
+                      <!-- {{ getCellValue(row, column) | xmlToList }} -->
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'image'">
+                      <!-- {{ getCellValue(row, column) }} <br /> -->
+                      <img
+                        [src]="'assets/flags/' + getImageUrl(row, column)"
+                        [alt]="getCellValue(row, column)"
+                        class="flag-image" />
+                    </ng-container>
+                    <ng-container *ngSwitchDefault>
+                      {{ getCellValue(row, column) }}
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+                <ng-template #actionsTemplate>
+                  <div
+                    class="row d-flex justify-content-center"
+                    style="width: 200px">
+                    <ng-container
+                      *ngFor="let action of column.lstActions; let i = index">
+                      @if (!action.rolesAuthorized || (userLogged.rolid &&
+                      action.rolesAuthorized.includes(userLogged.rolid))) {
+                      <div class="col-4">
+                        <ion-button
+                          [id]="'action-button-' + i"
+                          [color]="action.color"
+                          (click)="onActionClick(row, action.action)"
+                          [attr.aria-label]="action.alias"
+                          shape="round"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          [title]="
+                            action.alias + ' ' + context ||
+                            'Descripción no disponible'
+                          ">
+                          <ion-icon
+                            slot="icon-only"
+                            [name]="action.icon"></ion-icon>
+                        </ion-button>
+                      </div>
+                      }
+                    </ng-container>
+                  </div>
+                </ng-template>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-container>
+  </ion-card-content>
+</ion-card>
+
+<!-- Sección de vista móvil -->
+<!-- <section class="d-md-none">
+  <ion-list>
+    <ion-item *ngFor="let row of data">
+      <ion-label>
+        <h2>{{ getCellValue(row, columnsData[0]) }}</h2>
+        <p>{{ getCellValue(row, columnsData[1]) }}</p>
+      </ion-label>
+      <ion-button slot="end">
+        <ion-icon name="information-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</section> -->
+
+<!-- Seccion de paginacion -->
+<section
+  class="d-flex justify-content-center mb-5"
+  *ngIf="search === '' && showPagination === true">
+  <nz-pagination
+    [nzPageIndex]="currentPage"
+    [nzTotal]="totalPages * 10"
+    (nzPageIndexChange)="goToPage($event)"></nz-pagination>
+  <!-- <nav aria-label="Page navigation" class="mt-3">
+    <ul class="pagination justify-content-end">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a class="page-link" (click)="previousPage()" role="button" tabindex="0"
+          ><ion-icon name="arrow-back-outline"></ion-icon
+        ></a>
+      </li>
+      <li class="page-item" *ngIf="visiblePages[0] > 1">
+        <span class="page-link">...</span>
+      </li>
+      <li
+        class="page-item"
+        *ngFor="let page of visiblePages"
+        [class.active]="page === currentPage">
+        <a
+          class="page-link"
+          (click)="goToPage(page)"
+          role="button"
+          tabindex="0"
+          >{{ page }}</a
+        >
+      </li>
+      <li
+        class="page-item"
+        *ngIf="visiblePages[visiblePages.length - 1] < totalPages">
+        <span class="page-link">...</span>
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <a class="page-link" (click)="nextPage()" role="button" tabindex="0"
+          ><ion-icon name="arrow-forward-outline"></ion-icon
+        ></a>
+      </li>
+    </ul>
+  </nav> -->
+</section>

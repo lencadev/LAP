@@ -1,0 +1,68 @@
+<ion-content [fullscreen]="true">
+  <app-wrapper
+    [showBreadcrumb]="false"
+    [textLoader]="textLoader"
+    [toastMessage]="toastMessage"
+    [toastColor]="toastColor"
+    [isToastOpen]="isToastOpen"
+    (isToastOpenChange)="setOpenedToast($event)">
+  </app-wrapper>
+  <!-- Crear login -->
+  <div
+    class="h-100 d-flex justify-content-center align-items-center align-content-center">
+    <ion-card style="max-width: 350px; width: 100%; min-height: 500px">
+      <ion-card-header>
+        <ion-card-title>Iniciar Sesión</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <!-- Logo de la app -->
+        <div class="d-flex justify-content-center">
+          <div
+            class="rounded rounded-pill justify-content-center align-content-center align-items-center"
+            style="
+              height: 150px;
+              width: 150px;
+              background-color: rgb(255, 255, 255);
+            ">
+            <img width="250" src="assets/logo.png" alt="logo" />
+          </div>
+        </div>
+        <ion-item lines="none">
+          <ion-label position="stacked" class="bold-label">Email</ion-label>
+          <ion-input
+            type="email"
+            [(ngModel)]="user.identificator"
+            (ionBlur)="validateForm()"
+            (keyup)="goToLogin($event)"></ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="formErrors.email">
+          {{ formErrors.email }}
+        </ion-text>
+
+        <ion-item lines="none">
+          <ion-label position="stacked" class="bold-label">Password</ion-label>
+          <ion-input
+            type="password"
+            [(ngModel)]="user.password"
+            (ionBlur)="validateForm()"
+            (keyup)="goToLogin($event)">
+            <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+          </ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="formErrors.password">
+          {{ formErrors.password }}
+        </ion-text>
+        <ion-button class="mt-2" expand="block" (click)="login()"
+          >Entrar</ion-button
+        >
+        <ion-button
+          class="mt-2"
+          expand="block"
+          fill="clear"
+          (click)="goToForgotPassword()">
+          ¿Olvidaste tu contraseña?
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

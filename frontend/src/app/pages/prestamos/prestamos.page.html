@@ -1,0 +1,146 @@
+<ion-content [fullscreen]="false">
+  <app-wrapper
+    [textLoader]="textLoader"
+    [toastMessage]="toastMessage"
+    [toastColor]="toastColor"
+    [isToastOpen]="isToastOpen"
+    (isToastOpenChange)="setOpenedToast($event)">
+  </app-wrapper>
+  <section>
+    <app-view-data
+      [title]="'Prestamos'"
+      [context]="'prestamo'"
+      [state]="state"
+      [showFilter]="true"
+      [data]="elements"
+      [columnsData]="columnsData"
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      (filterButtonClicked)="onFilterButtonClicked()"
+      (addButtonClicked)="onAddButtonClicked()"
+      (editButtonClicked)="onEditButtonClicked($event)"
+      (deleteButtonClicked)="onDeleteButtonClicked($event)"
+      (infoButtonClicked)="onInfoButtonClicked($event)"
+      (checkButtonClicked)="onCheckButtonClicked($event)"
+      (planButtonClicked)="onPlanButtonClicked($event)"
+      (contractButtonClicked)="onContractButtonClicked($event)"
+      (pagoButtonClicked)="onPagoButtonClicked($event)"
+      (currentPageOut)="onPageChange($event)"
+      (searchOut)="onSearchData($event)">
+    </app-view-data>
+
+    <app-reusable-modal
+      [(isOpen)]="isModalOpen"
+      [content]="modalSelected"
+      [formSave]="formSelected"
+      (saveData)="handleSave($event)">
+    </app-reusable-modal>
+
+    <!-- Modal para autorizar prestamo -->
+    <ng-template
+      #modalAprobar
+      let-close="close"
+      let-save="save"
+      let-form="form">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Autorizar Préstamo</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="close()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <form [formGroup]="form" (ngSubmit)="save(form.value)">
+          <ion-grid>
+            <ion-row>
+              <ion-col size-xs="12" size-sm="6" size-md="6">
+                <ion-item lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >Fecha de Inicio:</ion-label
+                  >
+                  <ion-input
+                    type="date"
+                    formControlName="fechaInicio"
+                    placeholder="Seleccione la fecha de inicio"></ion-input>
+                </ion-item>
+              </ion-col>
+
+              <ion-col size-xs="12" size-sm="6" size-md="6">
+                <ion-item lines="none">
+                  <ion-label position="stacked" class="bold-label"
+                    >Decisión</ion-label
+                  >
+                  <ion-select
+                    formControlName="idEstadoInterno"
+                    placeholder="Seleccione una opción">
+                    @for (item of estadosAprobacion; track item.id) {
+                    <ion-select-option [value]="item.id"
+                      >{{item.descripcion}}</ion-select-option
+                    >
+                    } @empty {
+                    <ion-select-option [value]="0"
+                      >No hay estados</ion-select-option
+                    >
+                    }
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <ion-grid>
+            <ion-row class="ion-justify-content-center">
+              <ion-col size-xs="12" size-sm="8" size-md="6" size-lg="4">
+                <ion-button expand="block" type="submit" class="ion-margin-top">
+                  Confirmar Decisión
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </form>
+      </ion-content>
+    </ng-template>
+
+    <ng-template #modalViewInfo let-close="close" let-save="save">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Vista de Prestamo</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="close()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <card-view-info
+          [element]="element"
+          [columnsData]="columnsData"></card-view-info>
+      </ion-content>
+    </ng-template>
+
+    <ng-template #modalViewPlan let-close="close">
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Plan de pago</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="close()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content>
+        <app-view-data
+          [showAdd]="false"
+          [showSearch]="false"
+          [showTitle]="false"
+          [showPagination]="false"
+          [currentPage]="1"
+          [totalPages]="10"
+          [title]="'Proyección de Pago'"
+          [context]="'proyeccion'"
+          [data]="proyeccionesPlan"
+          [columnsData]="columnsDataPlan">
+        </app-view-data>
+      </ion-content>
+    </ng-template>
+  </section>
+</ion-content>

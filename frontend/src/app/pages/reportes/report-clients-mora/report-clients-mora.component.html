@@ -1,0 +1,59 @@
+<div class="header">
+  <h3 class="text-center">{{ company }}</h3>
+  <h3 class="text-center">Reporte de Clientes en Mora</h3>
+</div>
+
+<div class="date-emision">
+  <p>
+    <strong>Asesor:</strong> {{ asesorSelected?.nombre || "Todos" }}
+    {{ asesorSelected?.apellido }}
+  </p>
+  <p>{{ subtractHours(dateNow, 6) | customDate }}</p>
+</div>
+
+<div class="table-responsive mt-3">
+  <table class="custom-table table-sticky">
+    <thead class="thead-sticky">
+      <tr>
+        <th>Cod. Cuota</th>
+        <th>Cod. Cliente</th>
+        <th>Nombre</th>
+        <th>Cod. Préstamo</th>
+        <th>Monto Préstamo</th>
+        <th>Saldo Ptmo.</th>
+        <th>Cuota en Mora</th>
+        <th>Días Mora</th>
+        <th>Monto de Mora</th>
+        <th>Total a Pagar</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of elements; track $index) {
+      <tr>
+        <td class="text-center">{{ item.idCuota}}</td>
+        <td class="text-center">{{ item.codCliente }}</td>
+        <td>{{ item.nombre }}</td>
+        <td class="text-center">{{ item.codPrestamo }}</td>
+        <td>{{ item.montoPrestamo | currency : "L" : "symbol" }}</td>
+        <td>{{ item.saldPtmo | currency : "L" : "symbol" }}</td>
+        <td>{{ item.cuota | currency : "L" : "symbol" }}</td>
+        <td class="text-center">{{ item.diasMora }}</td>
+        <td>{{ item.montoMora | currency : "L" : "symbol" }}</td>
+        <td>{{ item.montoMora + item.cuota | currency : "L" : "symbol" }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<div class="section">Resumen:</div>
+<table class="custom-table">
+  <tr>
+    <th>Total Clientes en Mora</th>
+    <th>Total Monto en Mora</th>
+  </tr>
+  <tr>
+    <td class="text-center">{{ totalClients }}</td>
+    <td class="text-center">{{ totalMora | currency : "L" : "symbol" }}</td>
+  </tr>
+</table>
