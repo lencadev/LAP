@@ -158,24 +158,41 @@ export class GlobalService {
 
   numberToText(numero: number): string {
     if (numero < 0 || numero > 99) {
-      return "Número fuera de rango";
+        return "Número fuera de rango";
+    }
+
+    if (!this.unidades || !this.decenas || !this.especiales) {
+        return "Error en la conversión";
+    }
+
+    if (numero === 10) {
+        return "diez";
     }
 
     if (numero < 10) {
-      return this.unidades[numero];
+        return this.unidades[numero];
     }
 
     if (numero < 20) {
-      return this.especiales[numero - 11];
+        return this.especiales[numero - 11];
+    }
+
+    if (numero === 20) {
+        return "veinte";
+    }
+
+    if (numero > 20 && numero < 30) {
+        return `veinti${this.unidades[numero - 20]}`;
     }
 
     const unidad = numero % 10;
     const decena = Math.floor(numero / 10);
 
     if (unidad === 0) {
-      return this.decenas[decena - 1];
+        return this.decenas[decena - 1];
     }
 
     return `${this.decenas[decena - 1]} y ${this.unidades[unidad]}`;
-  }
+}
+
 }
